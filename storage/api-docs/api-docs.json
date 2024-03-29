@@ -1,0 +1,118 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Your API",
+        "description": "Description of your API",
+        "contact": {
+            "email": "ahmed@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/store": {
+            "post": {
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Create a new wallet",
+                "operationId": "createWallet",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "montant",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "montant": {
+                                        "type": "integer",
+                                        "example": "1000"
+                                    },
+                                    "type": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "your_wallet_number": {
+                                            "type": "string"
+                                        },
+                                        "you_have": {
+                                            "type": "integer"
+                                        },
+                                        "you_chose": {
+                                            "type": "string"
+                                        },
+                                        "you_can_access_to": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or wallet type already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Create an account first to have a wallet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
