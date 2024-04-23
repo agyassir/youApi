@@ -24,6 +24,7 @@ class AuthController extends Controller
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>$password,
+            'role_id'=>'2'
         ]);
         return response()->json(['response'=>'you have been registered succsefully' ],200);
         

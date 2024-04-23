@@ -26,5 +26,5 @@ Route::post('/send',[WalletController::class,'send'])->middleware('auth:sanctum'
 Route::post('/ajouter',[WalletController::class,'add'])->middleware('auth:sanctum');   
 Route::get('/get',[WalletController::class,'get']);   
 Route::get('/mine',[WalletController::class,'mine'])->middleware('auth:sanctum');   
-Route::get('/Mywallets',[WalletController::class,'history'])->middleware('auth:sanctum');
+Route::get('/Mywallets/{id}',[WalletController::class,'history'])->middleware('auth:sanctum');
 Route::get('/logout',[AuthController::class,'logout'])->name('logout');

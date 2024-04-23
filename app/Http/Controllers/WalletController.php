@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Type;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -93,12 +94,13 @@ class WalletController extends Controller
             'type_id'=>$request->type,
             
            ]);
-           $id=$this->get($wallet->id);
+           $id=$this->get($wallet->type_id);
+           
              $data=[
                 'your wallet number'=>$id ,
                 'you have :'=>$wallet->montant,
                 'you chose :'=>$wallet->type->type,
-                'you can access to '=>$wallet->type->platfont.'% of what you have at once',
+                'you can get '=>$wallet->type->platfont.'$ at once',
             ];
            return response()->json($data,200);
         }}else{
@@ -109,15 +111,25 @@ class WalletController extends Controller
 
     public function get($id){
         $query = DB::table('wallets')
-    ->where('id', $id)
+    ->where('type_id', $id)
     ->select(DB::raw('CAST(id AS CHAR) AS id'))
     ->first();
         return $query->id;
     }
 
-    public function mine(){
-        $wallet = Wallet::where('user_id',Auth::id())->get();
-        return $wallet;
+    public function mine() {
+        $wallet = DB::table('wallets')
+            ->join('types', 'wallets.type_id', '=', 'types.id')
+            ->where('wallets.user_id', Auth::id())
+            ->select('wallets.type_id', 'types.type')
+            ->get();
+    
+        $user = Auth::user();
+    
+        return response()->json([
+            'user' => $user,
+            'wallets' => $wallet
+        ]);
     }
 
 
@@ -162,14 +174,20 @@ class WalletController extends Controller
             }
         }
 
-        public function history(){
+        public function history($id){
             if(Auth::user()->role_id == 1 ){
                 $transactions=Transaction::all();
                 return $transactions;
             }else{
-            $wallets=User::find(Auth::id())->wallets;
-            $transaction=Transaction::where('sender',$wallets[0]->id)->orWhere('receiver',$wallets[0]->id)->get();
-            return $transaction;}
+            $wallet=User::find(Auth::id())->wallets->where('type_id',$id)->first();
+            $transactions=Transaction::where('sender',$wallet->id)->orWhere('receiver',$wallet->id)->get();
+           $type=Type::find($wallet->type_id);
+            return response()->json([
+                'transactions' => $transactions,
+                'wallet'=>$wallet,
+                'type'=>$type
+            ]);
+        }
         }
 
         public function add(Request $request){
